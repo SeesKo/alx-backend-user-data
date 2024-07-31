@@ -76,17 +76,24 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     """
     Get a database connection using credentials from environment variables.
     """
-    db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
-    db_name = os.getenv("PERSONAL_DATA_DB_NAME", "")
-    db_user = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
-    db_pwd = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
-    connection = mysql.connector.connect(
-        host=db_host,
-        port=3306,
-        user=db_user,
-        password=db_pwd,
-        database=db_name,
-    )
+    # Retrieve environment variables with default values
+    db_user = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    db_password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    # Check if the database name is provided
+    if not db_name:
+        raise ValueError(
+            "Environment variable PERSONAL_DATA_DB_NAME must be set.")
+
+    # Create a dictionary with database connection parameters
+    db_config = {
+        'user': db_user,
+        'password': db_password,
+        'host': db_host,
+        'database': db_name
+    }
 
     # Establish the database connection
     connection = mysql.connector.connect(**db_config)

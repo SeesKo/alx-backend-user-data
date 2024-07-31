@@ -87,16 +87,13 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         raise ValueError(
             "Environment variable PERSONAL_DATA_DB_NAME must be set.")
 
-    # Create a dictionary with database connection parameters
-    db_config = {
-        'user': db_user,
-        'password': db_password,
-        'host': db_host,
-        'database': db_name
-    }
-
-    # Establish the database connection
-    connection = mysql.connector.connect(**db_config)
+    # Create a connection to the MySQL database
+    connection = mysql.connector.connect(
+        user=db_user,
+        password=db_password,
+        host=db_host,
+        database=db_name
+    )
 
     return connection
 

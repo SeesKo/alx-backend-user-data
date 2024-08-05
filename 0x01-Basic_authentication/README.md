@@ -1,4 +1,4 @@
-# Basic Authentication Project
+# 0x01. Basic authentication
 
 This project demonstrates how to implement Basic Authentication in a simple Flask API.
 

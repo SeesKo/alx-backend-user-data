@@ -40,9 +40,9 @@ class BasicAuth(Auth):
             return None
         try:
             base64_bytes = base64_authorization_header.encode('utf-8')
-            decoded_bytes = base64.b64decode(base64_bytes)
+            decoded_bytes = base64.b64decode(base64_bytes, validate=True)
             return decoded_bytes.decode('utf-8')
-        except (TypeError, base64.binascii.Error):
+        except (TypeError, base64.binascii.Error, UnicodeDecodeError):
             return None
 
     def extract_user_credentials(
@@ -69,14 +69,31 @@ class BasicAuth(Auth):
         """
         Returns the User instance based on his email and password
         """
-        if user_email is None or not isinstance(user_email, str):
+        if type(user_email) == str and type(user_pwd) == str:
+            try:
+                users = User.search({'email': user_email})
+            except Exception:
+                return None
+            if len(users) <= 0:
+                return None
+            if users[0].is_valid_password(user_pwd):
+                return users[0]
+        return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        Retrieves the User instance for a request
+        """
+        auth_header = self.authorization_header(request)
+        if auth_header is None:
             return None
-        if user_pwd is None or not isinstance(user_pwd, str):
+        base64_header = self.extract_base64_authorization_header(auth_header)
+        if base64_header is None:
             return None
-        user_list = User.search({"email": user_email})
-        if not user_list:
+        decoded_header = self.decode_base64_authorization_header(base64_header)
+        if decoded_header is None:
             return None
-        user = user_list[0]
-        if not user.is_valid_password(user_pwd):
+        user_email, user_pwd = self.extract_user_credentials(decoded_header)
+        if user_email is None or user_pwd is None:
             return None
-        return user
+        return self.user_object_from_credentials(user_email, user_pwd)

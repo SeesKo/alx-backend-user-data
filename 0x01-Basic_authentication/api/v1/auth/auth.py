@@ -4,6 +4,7 @@ Authentication module for the API
 """
 from typing import List, TypeVar
 from flask import request
+import fnmatch
 
 
 User = TypeVar('User')

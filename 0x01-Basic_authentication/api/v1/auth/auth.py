@@ -26,14 +26,10 @@ class Auth:
 
         for excluded_path in excluded_paths:
             # Ensure excluded_path ends with a '/'
-            if excluded_path.endswith('*'):
-                base_path = excluded_path.rstrip('*').rstrip('/') + '/'
-                if path.startswith(base_path):
-                    return False
-            else:
-                excluded_path = excluded_path.rstrip('/') + '/'
-                if path == excluded_path:
-                    return False
+            excluded_path = excluded_path.rstrip('/') + '/'
+            # Use fnmatch to check for wildcard matches
+            if fnmatch.fnmatch(path, excluded_path):
+                return False
 
         return True
 

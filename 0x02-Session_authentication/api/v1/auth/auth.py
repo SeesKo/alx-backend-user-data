@@ -5,7 +5,6 @@ Authentication module for the API
 from typing import List, TypeVar
 from flask import request
 import fnmatch
-import os
 
 
 User = TypeVar('User')
@@ -47,21 +46,4 @@ class Auth:
         """
         Returns the current user based on the request
         """
-        if request is None:
-            return None
-        session_id = self.session_cookie(request)
-        if session_id is None:
-            return None
-        user_id = self.user_id_for_session_id(session_id)
-        if user_id is None:
-            return None
-        return User.get(user_id)
-
-    def session_cookie(self, request=None) -> str:
-        """
-        Returns the session cookie value from the request
-        """
-        if request is None:
-            return None
-        session_name = os.getenv('SESSION_NAME', '_my_session_id')
-        return request.cookies.get(session_name)
+        return None

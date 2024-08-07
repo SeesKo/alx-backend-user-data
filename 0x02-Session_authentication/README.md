@@ -1,6 +1,6 @@
-# 0x02. Session authentication
+# 0x01. Basic authentication
 
-This project implements session authentication using Flask. It demonstrates how to handle session creation, management, and termination using HTTP cookies.
+This project demonstrates how to implement Basic Authentication in a simple Flask API.
 
 ## Requirements
 

@@ -4,6 +4,7 @@ Authentication module for the API
 """
 from typing import List, TypeVar
 from flask import request
+from os import getenv
 import fnmatch
 
 
@@ -47,3 +48,13 @@ class Auth:
         Returns the current user based on the request
         """
         return None
+
+    def session_cookie(self, request=None) -> str:
+        """
+        Retrieve the session cookie value from the request
+        """
+        if request is None:
+            return None
+
+        session_name = getenv("SESSION_NAME", "_my_session_id")
+        return request.cookies.get(session_name)

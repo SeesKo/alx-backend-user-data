@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Route module for the API
+This module sets up the Flask application and handles API routing,
+authentication, and error handling.
 """
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
@@ -27,7 +28,12 @@ else:
 
 @app.before_request
 def before_request():
-    """Request handler before each request"""
+    """Handle requests before they reach the view function.
+
+    This method checks if the request path requires authentication,
+    and if so, verifies the authorization header or session cookie.
+    Aborts with 401 or 403 if authentication fails.
+    """
     if auth is None:
         return
 
@@ -52,19 +58,40 @@ def before_request():
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """Not found handler"""
+    """Return a JSON response for 404 errors.
+
+    Args:
+        error: The error object.
+
+    Returns:
+        A JSON response with an error message and status code 404.
+    """
     return jsonify({"error": "Not found"}), 404
 
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """Unauthorized handler"""
+    """Return a JSON response for 401 errors.
+
+    Args:
+        error: The error object.
+
+    Returns:
+        A JSON response with an error message and status code 401.
+    """
     return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """Forbidden handler"""
+    """Return a JSON response for 403 errors.
+
+    Args:
+        error: The error object.
+
+    Returns:
+        A JSON response with an error message and status code 403.
+    """
     return jsonify({"error": "Forbidden"}), 403
 
 

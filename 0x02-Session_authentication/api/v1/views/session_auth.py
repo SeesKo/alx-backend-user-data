@@ -3,7 +3,7 @@
 Module for session authentication views
 """
 from api.v1.app import auth
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, abort, jsonify, request
 from models.user import User
 import os
 
@@ -41,9 +41,21 @@ def login():
     return response
 
 
+@app_views.route(
+    '/auth_session/logout', methods=['DELETE'],
+    strict_slashes=False
+)
+def logout():
+    """ Log out the current authenticated user by destroying their session
+    """
+    if not auth.destroy_session(request):
+        abort(404)
+    return jsonify({}), 200
+
+
 @app_views.route('/users/me', methods=['GET'], strict_slashes=False)
 def me():
-    """ Retrieve the current authenticated user's information.
+    """ Retrieve the current authenticated user's information
     """
     current_user = auth.current_user(request)
     if not current_user:

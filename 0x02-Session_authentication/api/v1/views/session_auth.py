@@ -6,11 +6,14 @@ from flask import Blueprint, jsonify, request, make_response
 from models.user import User
 import os
 
+
 app_views = Blueprint("app_views", __name__, url_prefix="/api/v1")
 
-@app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
+
+@app_views.route('/auth_session/login', methods=['POST'],
+                 strict_slashes=False)
 def login():
-    """ POST /api/v1/auth_session/login
+    """
     Handles user login and session creation
     """
     email = request.form.get('email')
@@ -41,10 +44,13 @@ def login():
 
     return response
 
-@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
 def logout():
-    """ DELETE /api/v1/auth_session/logout
-    Logs out the current authenticated user by destroying their session
+    """
+    Logs out the current authenticated user
+    by destroying their session
     """
     # Import auth dynamically to avoid circular imports
     from api.v1.app import auth
@@ -54,9 +60,10 @@ def logout():
 
     return jsonify({}), 200
 
+
 @app_views.route('/users/me', methods=['GET'], strict_slashes=False)
 def me():
-    """ GET /api/v1/users/me
+    """
     Retrieve the current authenticated user's information
     """
     # Import auth dynamically to avoid circular imports

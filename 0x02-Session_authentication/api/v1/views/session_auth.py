@@ -24,9 +24,6 @@ def login():
     if not password:
         return jsonify({"error": "password missing"}), 400
 
-    # Import auth dynamically to avoid circular imports
-    from api.v1.app import auth
-
     users = User.search({'email': email})
     if not users:
         return jsonify({"error": "no user found for this email"}), 404
@@ -35,6 +32,9 @@ def login():
 
     if not user.is_valid_password(password):
         return jsonify({"error": "wrong password"}), 401
+
+    # Import auth dynamically to avoid circular imports
+    from api.v1.app import auth
 
     session_id = auth.create_session(user.id)
 

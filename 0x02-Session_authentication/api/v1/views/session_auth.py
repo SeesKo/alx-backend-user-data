@@ -2,9 +2,9 @@
 """
 Module for Session Authentication views
 """
-from api.v1.app import auth
 from flask import Blueprint, request, jsonify, make_response
 from models.user import User
+from api.v1.app import auth
 from os import getenv
 
 

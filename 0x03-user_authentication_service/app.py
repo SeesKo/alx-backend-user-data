@@ -12,16 +12,14 @@ AUTH = Auth()
 
 @app.route("/", methods=["GET"])
 def home() -> str:
-    """
-    GET route to return a welcome message.
+    """GET route to return a welcome message.
     """
     return jsonify({"message": "Bienvenue"})
 
 
 @app.route("/users", methods=["POST"])
 def users() -> str:
-    """
-    POST users route to register a new user.
+    """POST users route to register a new user.
     """
     email: str = request.form.get("email")
     password: str = request.form.get("password")
@@ -35,7 +33,8 @@ def users() -> str:
 
 @app.route("/sessions", methods=["POST"])
 def login() -> str:
-    """Log in a user and create a session."""
+    """Log in a user and create a session
+    """
     email: Optional[str] = request.form.get("email")
     password: Optional[str] = request.form.get("password")
 
@@ -71,7 +70,8 @@ def logout():
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    """Handle GET /profile request"""
+    """Handle GET /profile request
+    """
     # Get session_id from cookies
     session_id = request.cookies.get('session_id')
 
@@ -81,6 +81,26 @@ def profile():
     if user is None:
         abort(403)
     return jsonify({"email": user.email})
+
+
+@app.route('/reset_password', methods=['POST'])
+def get_reset_password_token():
+    """Handle the POST /reset_password route
+    """
+    email = request.form.get('email')
+
+    if not email:
+        abort(400)
+    try:
+        # Generate reset password token
+        reset_token = AUTH.get_reset_password_token(email)
+        # Return JSON response
+        return jsonify({
+            'email': email,
+            'reset_token': reset_token
+        }), 200
+    except ValueError:
+        abort(403)
 
 
 if __name__ == "__main__":

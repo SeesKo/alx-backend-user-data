@@ -2,7 +2,7 @@
 """
 Flask app with user registration
 """
-from flask import Flask, abort, jsonify, request, make_response
+from flask import Flask, abort, jsonify, redirect, request, make_response
 from auth import Auth
 
 
@@ -51,3 +51,28 @@ def login() -> str:
         return response
     else:
         abort(401, description="Invalid credentials")
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """Logout a user by destroying the session
+    """
+    session_id = request.cookies.get('session_id')
+
+    if session_id is None:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user is None:
+        abort(403)
+
+    # Destroy the session for the user
+    AUTH.destroy_session(user.id)
+
+    # Redirect to the homepage
+    return redirect('/')
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port="5000")

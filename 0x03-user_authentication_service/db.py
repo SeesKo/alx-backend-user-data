@@ -31,13 +31,44 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """Adds a new user to the database.
+        """Adds a user to the database and returns the User object
         """
         try:
             new_user = User(email=email, hashed_password=hashed_password)
             self._session.add(new_user)
             self._session.commit()
-        except Exception:
+            return new_user
+        except SQLAlchemyError as e:
             self._session.rollback()
-            new_user = None
-        return new_user
+            return None
+
+    def find_user_by(self, **kwargs) -> User:
+        """Finds a user based on keyword arguments.
+        """
+        try:
+            user = self._session.query(User).filter_by(**kwargs).one()
+            return user
+        except NoResultFound:
+            raise NoResultFound
+        except InvalidRequestError:
+            raise InvalidRequestError
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Updates a user's attributes.
+        """
+        try:
+            # Find the user by user_id
+            user = self.find_user_by(id=user_id)
+
+            for key, value in kwargs.items():
+                if hasattr(user, key):
+                    setattr(user, key, value)
+                else:
+                    raise ValueError
+
+            self._session.commit()
+
+        except NoResultFound:
+            raise ValueError
+        except InvalidRequestError:
+            raise ValueError

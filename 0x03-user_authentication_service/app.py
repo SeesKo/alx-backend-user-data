@@ -2,7 +2,7 @@
 """
 Basic Flask app with user registration
 """
-from flask import Flask, request, jsonify
+from flask import Flask, abort, jsonify, request
 from auth import Auth
 
 
@@ -10,14 +10,14 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route("/", methods=["GET"], strict_slashes=False)
+@app.route("/", methods=["GET"])
 def welcome() -> str:
     """GET route that returns a welcome message."""
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route("/users", methods=["POST"], strict_slashes=False)
-def register_user():
+@app.route("/users", methods=["POST"])
+def register_user() -> str:
     """POST /users route for user registration."""
     email = request.form.get('email')
     password = request.form.get('password')

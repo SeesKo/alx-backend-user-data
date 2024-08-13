@@ -15,11 +15,6 @@ def _hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
-def _generate_uuid() -> str:
-    """Generates a new UUID and returns it as a string."""
-    return str(uuid.uuid4())
-
-
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -28,6 +23,10 @@ class Auth:
         """Initialize the Auth class with a database instance.
         """
         self._db = DB()
+
+    def _generate_uuid(self) -> str:
+        """Generates a new UUID and returns it as a string."""
+        return str(uuid.uuid4())
 
     def register_user(self, email: str, password: str) -> User:
         """Registers a new user with an email and password.
@@ -42,18 +41,17 @@ class Auth:
             return user
 
     def valid_login(self, email: str, password: str) -> bool:
-        """Validates user login with email and password."""
+        """
+        Validates login credentials for a user."""
         try:
             user = self._db.find_user_by(email=email)
-            return bcrypt.checkpw(
-                password.encode('utf-8'),
-                user.hashed_password.encode('utf-8')
-            )
-        except NoResultFound:
+            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+        except (NoResultFound, AttributeError):
             return False
 
     def create_session(self, email: str) -> str:
-        """Creates a session for the user with the given email."""
+        """
+        Creates a session for the user with the given email."""
         try:
             user = self._db.find_user_by(email=email)
             session_id = self._generate_uuid()

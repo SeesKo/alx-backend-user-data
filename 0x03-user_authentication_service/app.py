@@ -78,7 +78,8 @@ def profile():
     # Find the user based on session_id
     user = AUTH.get_user_from_session_id(session_id)
 
-    AUTH.destroy_session(user.id)
+    if user is None:
+        abort(403)
     return jsonify({"email": user.email})
 
 

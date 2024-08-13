@@ -68,7 +68,7 @@ def logout():
         abort(403)
 
     # Destroy the session for the user
-    AUTH.destroy_session(user.id)
+    auth.destroy_session(user.id)
 
     # Redirect to the homepage
     return redirect('/')

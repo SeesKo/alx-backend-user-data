@@ -1,33 +1,38 @@
 #!/usr/bin/env python3
-"""A simple Flask app with user authentication features.
 """
-from flask import Flask, jsonify, request
+Flask app with user registration
+"""
+from flask import Flask, jsonify, request, Response, abort
 from auth import Auth
+from typing import Dict, Union
 
 
 app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route("/", methods=["GET"], strict_slashes=False)
-def index() -> str:
-    """GET /
-    Return:
-        - The home page's payload.
+@app.route("/", methods=["GET"])
+def welcome() -> Response:
+    """
+    GET route to return a welcome message.
     """
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route("/users", methods=["POST"], strict_slashes=False)
-def users() -> str:
-    """POST /users
-    Return:
-        - The account creation payload.
+@app.route("/users", methods=["POST"])
+def users() -> Union[Response, tuple]:
     """
-    email, password = request.form.get("email"), request.form.get("password")
+    POST users route to register a new user.
+    """
+    email: str = request.form.get("email")
+    password: str = request.form.get("password")
+
+    if not email or not password:
+        return jsonify({"message": "email and password required"}), 400
+
     try:
-        AUTH.register_user(email, password)
-        return jsonify({"email": email, "message": "user created"})
+        user = AUTH.register_user(email, password)
+        return jsonify({"email": user.email, "message": "user created"})
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
 

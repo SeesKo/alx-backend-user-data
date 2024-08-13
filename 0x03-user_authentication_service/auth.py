@@ -100,7 +100,7 @@ class Auth:
             raise ValueError
 
         # Generate a new UUID token
-        reset_token = str(uuid.uuid4())
+        reset_token = str(uuid4())
         # Update the user's reset token in the database
         self._db.update_user(user.id, reset_token=reset_token)
 

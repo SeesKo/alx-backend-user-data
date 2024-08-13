@@ -115,10 +115,11 @@ def update_password():
         abort(400)  # Bad Request if any field is missing
 
     try:
-        auth.update_password(reset_token, new_password)
-        return jsonify({"email": email, "message": "Password updated"}), 200
+        AUTH.update_password(reset_token, new_password)
     except ValueError:
         abort(403)
+
+    return jsonify({"email": email, "message": "Password updated"}), 200
 
 
 if __name__ == "__main__":

@@ -70,8 +70,7 @@ def logout():
     # Destroy the session for the user
     auth.destroy_session(user.id)
 
-    # Redirect to the homepage
-    return redirect('/')
+    return jsonify({"email": user.email, "message": "logged out"})
 
 
 if __name__ == "__main__":

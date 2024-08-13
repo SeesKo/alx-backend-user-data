@@ -4,6 +4,7 @@ Flask app with user registration
 """
 from flask import Flask, jsonify, request, Response, abort
 from auth import Auth
+from auth import _hash_password
 from typing import Dict, Union
 
 

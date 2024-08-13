@@ -4,10 +4,11 @@ Authentication module
 """
 import bcrypt
 import uuid
+from sqlalchemy.orm.exc import NoResultFound
+from typing import Optional
+from uuid import uuid4
 from db import DB
 from user import User
-from sqlalchemy.orm.exc import NoResultFound
-from uuid import uuid4
 
 
 def _hash_password(password: str) -> bytes:
@@ -62,3 +63,27 @@ class Auth:
             return session_id
         except NoResultFound:
             return None
+
+    def get_user_from_session_id(
+        self, session_id: Optional[str]
+    ) -> Optional[User]:
+        """Get a user based on session_id.
+        """
+        if session_id is None:
+            return None
+
+        try:
+            # Find the user by session_id using public method `find_user_by`
+            user = self._db.find_user_by(session_id=session_id)
+            return user
+        except NoResultFound:
+            return None
+
+    def destroy_session(self, user_id: int) -> None:
+        """Destroy session by updating user's session_id to None.
+        """
+        try:
+            user = self._db.find_user_by(id=user_id)
+            self._db.update_user(user, session_id=None)
+        except NoResultFound:
+            pass

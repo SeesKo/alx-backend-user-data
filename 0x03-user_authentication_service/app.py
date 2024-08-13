@@ -58,20 +58,15 @@ def logout():
     """Log out a user by destroying the session
     """
     session_id = request.cookies.get('session_id')
-
-    if session_id is None:
-        abort(403)
-
     user = AUTH.get_user_from_session_id(session_id)
 
     if user is None:
         abort(403)
-
     # Destroy the session for the user
-    auth.destroy_session(user.id)
+    AUTH.destroy_session(user.id)
 
-    return jsonify({"email": user.email, "message": "logged out"})
-
+    # Redirect to the homepage
+    return redirect('/')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")

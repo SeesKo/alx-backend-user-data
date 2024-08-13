@@ -25,7 +25,8 @@ class Auth:
         self._db = DB()
 
     def _generate_uuid(self) -> str:
-        """Generates a new UUID and returns it as a string."""
+        """Generates a new UUID and returns it as a string
+        """
         return str(uuid.uuid4())
 
     def register_user(self, email: str, password: str) -> User:
@@ -41,17 +42,18 @@ class Auth:
             return user
 
     def valid_login(self, email: str, password: str) -> bool:
+        """Validates login credentials for a user
         """
-        Validates login credentials for a user."""
         try:
             user = self._db.find_user_by(email=email)
-            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+            return bcrypt.checkpw(
+                password.encode('utf-8'), user.hashed_password)
         except (NoResultFound, AttributeError):
             return False
 
     def create_session(self, email: str) -> str:
+        """Creates a session for the user with the given email
         """
-        Creates a session for the user with the given email."""
         try:
             user = self._db.find_user_by(email=email)
             session_id = self._generate_uuid()
